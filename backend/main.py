@@ -13,6 +13,8 @@ from langchain.tools.retriever import create_retriever_tool
 from youtube_transcript_api import YouTubeTranscriptApi
 from langchain.agents import AgentExecutor, create_react_agent
 import os
+from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace
+
 
 app = Flask(__name__)
 os.environ["AI21_API_KEY"] = "tQ5ybFtCPDfMCgXZiCdVLwejMyKYro8p"
@@ -104,13 +106,20 @@ def summary():
 
     prompt = PromptTemplate.from_template(template)
 
-    model = ChatAI21(model="jamba-instruct", max_tokens=500)
+    # model = ChatAI21(model="jamba-instruct", max_tokens=500)
+
+    # model = ChatHuggingFace(model_id="mistralai/Mistral-7B-Instruct-v0.3", max_tokens=500)
+
+    model = ChatHuggingFace(llm = HuggingFaceEndpoint(
+        repo_id="mistralai/Mistral-7B-Instruct-v0.3",
+        task="text-generation",
+        max_new_tokens=4096,
+        do_sample=False,
+    ))
 
     chain = prompt | model
 
     response = chain.invoke({"context":concat_docs, "question": "Please give a detailed summary of the playlist., 2-3 sentences."}).dict()["content"]
-
-
     one_line_response = chain.invoke({"context":concat_docs, "question": "Please give a brief, one sentence summary."}).dict()["content"]
     PLAYLISTID_TO_ONE_LINERS[PLAYLIST_ID] = one_line_response
     return {"summary" : response}

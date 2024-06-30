@@ -5,7 +5,7 @@ import { TextInput, Button } from '@mantine/core';
 import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const [playlistURL, setPlaylistURL] = useState(null);
+  const [playlistURL, setPlaylistURL] = useState("https://www.youtube.com/playlist?list=PLZR1BGWBaZ1xNHAsECSZ5XWnHq-V4atUf");
   const router = useRouter();
 
   async function establish() {
