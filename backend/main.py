@@ -110,16 +110,18 @@ def summary():
 
     # model = ChatHuggingFace(model_id="mistralai/Mistral-7B-Instruct-v0.3", max_tokens=500)
 
+    # https://python.langchain.com/v0.2/docs/integrations/chat/huggingface/
+
     model = ChatHuggingFace(llm = HuggingFaceEndpoint(
         repo_id="mistralai/Mistral-7B-Instruct-v0.3",
         task="text-generation",
-        max_new_tokens=4096,
-        do_sample=False,
+        # max_new_tokens=4096,
+        # do_sample=False,
     ))
 
     chain = prompt | model
 
-    response = chain.invoke({"context":concat_docs, "question": "Please give a detailed summary of the playlist., 2-3 sentences."}).dict()["content"]
+    response = chain.invoke({"context":concat_docs, "question": "Please give a detailed summary of the playlist 2-3 sentences."}).dict()["content"]
     one_line_response = chain.invoke({"context":concat_docs, "question": "Please give a brief, one sentence summary."}).dict()["content"]
     PLAYLISTID_TO_ONE_LINERS[PLAYLIST_ID] = one_line_response
     return {"summary" : response}
