@@ -13,8 +13,9 @@ from langchain.tools.retriever import create_retriever_tool
 from youtube_transcript_api import YouTubeTranscriptApi
 from langchain.agents import AgentExecutor, create_react_agent
 import os
-from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace
-
+from langchain_huggingface.chat_models.huggingface import ChatHuggingFace
+from langchain_huggingface import HuggingFaceEndpoint
+from transformers import AutoTokenizer
 
 app = Flask(__name__)
 os.environ["AI21_API_KEY"] = "tQ5ybFtCPDfMCgXZiCdVLwejMyKYro8p"
@@ -52,7 +53,7 @@ def setup():
     playlist_urls = Playlist(playlist_URL)
     
     if not os.path.isdir(f"videos/{PLAYLIST_ID}"): 
-            os.mkdir(f"videos/{PLAYLIST_ID}")
+        os.mkdir(f"videos/{PLAYLIST_ID}")
 
     for url in playlist_urls: 
         video_id = url[url.rfind("=") + 1 : ]
@@ -115,6 +116,9 @@ def summary():
     model = ChatHuggingFace(llm = HuggingFaceEndpoint(
         repo_id="mistralai/Mistral-7B-Instruct-v0.3",
         task="text-generation",
+        max_new_tokens=4096, 
+        top_k=10,
+        top_p=0.95
         # max_new_tokens=4096,
         # do_sample=False,
     ))
@@ -124,6 +128,7 @@ def summary():
     response = chain.invoke({"context":concat_docs, "question": "Please give a detailed summary of the playlist 2-3 sentences."}).dict()["content"]
     one_line_response = chain.invoke({"context":concat_docs, "question": "Please give a brief, one sentence summary."}).dict()["content"]
     PLAYLISTID_TO_ONE_LINERS[PLAYLIST_ID] = one_line_response
+    print(f"this is the response: {response}")
     return {"summary" : response}
 
 
