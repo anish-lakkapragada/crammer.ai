@@ -14,7 +14,7 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from langchain.agents import AgentExecutor, create_react_agent
 import os
 from langchain_huggingface.chat_models.huggingface import ChatHuggingFace
-from langchain_huggingface import HuggingFaceEndpoint
+from langchain_huggingface.llms.huggingface_endpoint import HuggingFaceEndpoint
 from transformers import AutoTokenizer
 
 app = Flask(__name__)
@@ -113,17 +113,20 @@ def summary():
 
     # https://python.langchain.com/v0.2/docs/integrations/chat/huggingface/
 
+    """code to transition our model to mistral model provided by HuggingFace."""
     model = ChatHuggingFace(llm = HuggingFaceEndpoint(
         repo_id="mistralai/Mistral-7B-Instruct-v0.3",
         task="text-generation",
-        max_new_tokens=4096, 
-        top_k=10,
-        top_p=0.95
+        max_new_tokens=3, 
+        # top_k=10,
+        # top_p=0.95
         # max_new_tokens=4096,
         # do_sample=False,
     ))
-
+    
     chain = prompt | model
+
+    print("GO GO GO GO GO")
 
     response = chain.invoke({"context":concat_docs, "question": "Please give a detailed summary of the playlist 2-3 sentences."}).dict()["content"]
     one_line_response = chain.invoke({"context":concat_docs, "question": "Please give a brief, one sentence summary."}).dict()["content"]

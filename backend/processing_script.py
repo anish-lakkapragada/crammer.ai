@@ -6,7 +6,6 @@ URL = "https://www.youtube.com/playlist?list=PLZR1BGWBaZ1xNHAsECSZ5XWnHq-V4atUf"
 
 playlist_urls = Playlist(URL)
 
-
 for url in playlist_urls: 
    video_id = url[url.rfind("=") + 1 : ]
    transcript = YouTubeTranscriptApi.get_transcript(video_id)
